@@ -3,10 +3,8 @@ import {
   supportedWellKnownFiles,
   WellKnownConfig,
 } from "@/lib/well-known";
-import { prismaEdge } from "@dub/prisma/edge";
+import { prisma } from "@dub/prisma";
 import { NextRequest, NextResponse } from "next/server";
-
-export const runtime = "edge";
 
 export async function GET(
   _req: NextRequest,
@@ -20,7 +18,7 @@ export async function GET(
   }
 
   const { appleAppSiteAssociation, assetLinks } =
-    (await prismaEdge.domain.findUnique({
+    (await prisma.domain.findUnique({
       where: {
         slug: domain,
       },

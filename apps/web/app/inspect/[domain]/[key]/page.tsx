@@ -1,4 +1,4 @@
-import { getLinkViaEdge } from "@/lib/planetscale";
+import { prisma } from "@dub/prisma";
 import {
   Background,
   Footer,
@@ -17,8 +17,6 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import LinkInspectorCard from "./card";
 
-export const runtime = "edge";
-
 export async function generateMetadata(props: {
   params: Promise<{ domain: string; key: string }>;
 }) {
@@ -26,7 +24,10 @@ export async function generateMetadata(props: {
   const domain = params.domain;
   const key = decodeURIComponent(params.key).slice(0, -1);
 
-  const data = await getLinkViaEdge({ domain, key });
+  const data = await prisma.link.findUnique({
+    where: { domain_key: { domain, key } },
+    select: { url: true, title: true, description: true, image: true },
+  });
 
   if (!data) {
     return;
@@ -50,7 +51,10 @@ export default async function InspectPage(props: {
   const domain = params.domain;
   const key = decodeURIComponent(params.key).slice(0, -1);
 
-  const data = await getLinkViaEdge({ domain, key });
+  const data = await prisma.link.findUnique({
+    where: { domain_key: { domain, key } },
+    select: { url: true, title: true, description: true, image: true },
+  });
 
   // if the link doesn't exist
   if (!data) {
