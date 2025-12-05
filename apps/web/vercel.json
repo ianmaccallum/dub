@@ -3,10 +3,6 @@
     {
       "path": "/api/cron/streams/update-workspace-clicks",
       "schedule": "0 1 * * *"
-    },
-    {
-      "path": "/api/cron/streams/update-partner-stats",
-      "schedule": "0 1 * * *"
     }
   ],
   "functions": {
