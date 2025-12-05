@@ -1,6 +1,6 @@
 import { getStartEndDates } from "@/lib/analytics/utils/get-start-end-dates";
 import { Folder, Link } from "@dub/prisma/client";
-import { prismaEdge } from "@dub/prisma/edge";
+import { prisma } from "@dub/prisma";
 import {
   GOOGLE_FAVICON_URL,
   getApexDomain,
@@ -9,8 +9,6 @@ import {
 } from "@dub/utils";
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
-
-export const runtime = "edge";
 
 export async function GET(req: NextRequest) {
   const interMedium = await fetch(
@@ -30,7 +28,7 @@ export async function GET(req: NextRequest) {
   let link: Pick<Link, "domain" | "key" | "url"> | null = null;
   let folder: Pick<Folder, "id" | "name"> | null = null;
   if (linkId) {
-    const data = await prismaEdge.link.findUniqueOrThrow({
+    const data = await prisma.link.findUniqueOrThrow({
       where: {
         id: linkId,
       },
@@ -50,7 +48,7 @@ export async function GET(req: NextRequest) {
       url: data.url,
     };
   } else if (folderId) {
-    const data = await prismaEdge.folder.findUniqueOrThrow({
+    const data = await prisma.folder.findUniqueOrThrow({
       where: {
         id: folderId,
       },
