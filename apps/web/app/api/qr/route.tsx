@@ -1,14 +1,11 @@
 import { handleAndReturnErrorResponse } from "@/lib/api/errors";
 import { ratelimitOrThrow } from "@/lib/api/utils";
-import { getShortLinkViaEdge, getWorkspaceViaEdge } from "@/lib/planetscale";
-import { getDomainViaEdge } from "@/lib/planetscale/get-domain-via-edge";
 import { QRCodeSVG } from "@/lib/qr/utils";
 import { getQRCodeQuerySchema } from "@/lib/zod/schemas/qr";
+import { prisma } from "@dub/prisma";
 import { DUB_QR_LOGO, getSearchParams, isDubDomain } from "@dub/utils";
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
-
-export const runtime = "edge";
 
 const CORS_HEADERS = new Headers({
   "Access-Control-Allow-Origin": "*",
@@ -66,16 +63,22 @@ const getQRCodeLogo = async ({
   logo: string | undefined;
   hideLogo: boolean;
 }) => {
-  const shortLink = await getShortLinkViaEdge(url.split("?")[0]);
+  const shortLink = await prisma.link.findUnique({
+    where: { shortLink: url.split("?")[0] },
+    select: { projectId: true, domain: true },
+  });
 
   // Not a Dub link
   if (!shortLink) {
     return DUB_QR_LOGO;
   }
 
-  const workspace = await getWorkspaceViaEdge({
-    workspaceId: shortLink.projectId,
-  });
+  const workspace = shortLink.projectId
+    ? await prisma.project.findUnique({
+        where: { id: shortLink.projectId },
+        select: { plan: true, logo: true },
+      })
+    : null;
 
   if (workspace?.plan === "free") {
     return DUB_QR_LOGO;
@@ -91,13 +94,16 @@ const getQRCodeLogo = async ({
     return logo;
   }
 
-  // if it's a Dub owned domain and no  workspace logo is set, use the Dub logo
+  // if it's a Dub owned domain and no workspace logo is set, use the Dub logo
   if (isDubDomain(shortLink.domain) && !workspace?.logo) {
     return DUB_QR_LOGO;
   }
 
   // if it's a custom domain, check if it has a logo
-  const domain = await getDomainViaEdge(shortLink.domain);
+  const domain = await prisma.domain.findUnique({
+    where: { slug: shortLink.domain },
+    select: { logo: true },
+  });
 
   // return domain logo if it has one, otherwise fallback to workspace logo, and finally fallback to Dub logo
   return domain?.logo || workspace?.logo || DUB_QR_LOGO;
