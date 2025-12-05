@@ -1,5 +1,13 @@
-import { connect } from "@planetscale/database";
+import { prismaEdge } from "@dub/prisma/edge";
 
-export const conn = connect({
-  url: process.env.PLANETSCALE_DATABASE_URL || process.env.DATABASE_URL,
-});
+// Edge-compatible database connection using Prisma Accelerate
+// This provides a compatible interface for raw SQL queries
+export const conn = {
+  execute: async <T = any>(
+    query: string,
+    params: any[] = [],
+  ): Promise<{ rows: T[] }> => {
+    const rows = await prismaEdge.$queryRawUnsafe<T[]>(query, ...params);
+    return { rows };
+  },
+};

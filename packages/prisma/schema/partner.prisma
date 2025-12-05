@@ -88,6 +88,7 @@ model Partner {
 }
 
 model PartnerInvite {
+  id        String      @id @default(cuid())
   email     String
   expires   DateTime
   partnerId String
@@ -118,6 +119,7 @@ model PartnerUser {
 }
 
 model PartnerIndustryInterest {
+  id               String           @id @default(cuid())
   partnerId        String
   industryInterest IndustryInterest
 
@@ -135,6 +137,7 @@ enum PreferredEarningStructure {
 }
 
 model PartnerPreferredEarningStructure {
+  id                        String                    @id @default(cuid())
   partnerId                 String
   preferredEarningStructure PreferredEarningStructure
 
@@ -154,6 +157,7 @@ enum SalesChannel {
 }
 
 model PartnerSalesChannel {
+  id           String       @id @default(cuid())
   partnerId    String
   salesChannel SalesChannel
 

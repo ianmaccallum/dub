@@ -206,6 +206,7 @@ enum Category {
 }
 
 model ProgramCategory {
+  id        String   @id @default(cuid())
   programId String
   category  Category
 

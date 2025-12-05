@@ -84,6 +84,7 @@ enum WorkspaceRole {
 }
 
 model ProjectInvite {
+  id        String        @id @default(cuid())
   email     String
   expires   DateTime
   project   Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)

@@ -27,7 +27,7 @@ export const GET = withWorkspace(
       analyticsPathParamsSchema.parse(params);
 
     // for backwards compatibility (we used to support /analytics/[endpoint] as well)
-    if (!oldType && oldEvent && VALID_ANALYTICS_ENDPOINTS.includes(oldEvent)) {
+    if (!oldType && oldEvent && VALID_ANALYTICS_ENDPOINTS.includes(oldEvent as any)) {
       oldType = oldEvent;
       oldEvent = undefined;
     }
@@ -46,7 +46,7 @@ export const GET = withWorkspace(
       key,
       folderId,
       programId,
-    } = parsedParams;
+    } = parsedParams as any;
 
     let link: Link | null = null;
 

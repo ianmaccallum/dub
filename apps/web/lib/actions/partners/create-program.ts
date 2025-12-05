@@ -245,7 +245,7 @@ export const createProgram = async ({
           {
             type: "program",
             id: program.id,
-            metadata: program,
+            metadata: program as any,
           },
         ],
       }),

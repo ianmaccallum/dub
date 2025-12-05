@@ -1,13 +1,8 @@
-import { Client } from "@planetscale/database";
-import { PrismaPlanetScale } from "@prisma/adapter-planetscale";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client/edge";
+import { withAccelerate } from "@prisma/extension-accelerate";
 
-const client = new Client({
-  url: process.env.PLANETSCALE_DATABASE_URL || process.env.DATABASE_URL,
-});
-
-const adapter = new PrismaPlanetScale(client);
-
+// Edge-compatible Prisma client using Prisma Accelerate
+// Requires DATABASE_URL with prisma:// protocol
 export const prismaEdge = new PrismaClient({
-  adapter,
-});
+  datasourceUrl: process.env.DATABASE_URL,
+}).$extends(withAccelerate());

@@ -1,7 +1,6 @@
 import { getProgram } from "@/lib/fetchers/get-program";
 import { DEFAULT_PARTNER_GROUP } from "@/lib/zod/schemas/groups";
 import { formatRewardDescription } from "@/ui/partners/format-reward-description";
-import { prisma } from "@dub/prisma";
 import { Wordmark } from "@dub/ui";
 import { APP_DOMAIN, PARTNERS_DOMAIN } from "@dub/utils";
 import { constructMetadata } from "@dub/utils/src/functions";
@@ -39,16 +38,9 @@ export async function generateMetadata(props: {
 }
 
 export async function generateStaticParams() {
-  const programs = await prisma.program.findMany({
-    select: {
-      slug: true,
-    },
-  });
-
-  return programs.map((program) => ({
-    programSlug: program.slug,
-    groupSlug: DEFAULT_PARTNER_GROUP.slug,
-  }));
+  // Static generation disabled - pages will be generated on-demand at runtime
+  // To enable static generation, set up Prisma Accelerate with a prisma:// URL
+  return [];
 }
 
 export default async function ApplyLayout(
